@@ -29,7 +29,7 @@ Remember, it's not about your actual contribution to the codebase, it's about ho
 ## Installation
 
 ```
-cargo install rust-stakeholder
+cargo install --git https://github.com/giacomo-b/rust-stakeholder.git
 ```
 
 Or build from source (warning: might involve actual programming):
