@@ -40,6 +40,27 @@ cd rust-stakeholder
 cargo build --release # Look at you doing real developer things!
 ```
 
+## Docker
+Build image
+
+```bash
+docker build -t rust-stakeholder .
+```
+
+Usage
+
+Basic usage:
+
+```
+docker run -t --rm rust-stakeholder
+```
+
+All commands below can be used through:
+
+```bash
+docker run -t --rm rust-stakeholder [arguments]
+```
+
 ## Usage for career advancement
 
 Basic usage (for entry-level imposters):
