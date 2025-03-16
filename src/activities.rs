@@ -131,14 +131,14 @@ pub fn run_performance_metrics(config: &SessionConfig) {
     for i in 0..iterations {
         pb.set_position(i);
 
-        // Generate realistic-looking performance numbers
+        // Generate realistic-looking performance numbers (time in ms)
         let base_perf = match config.dev_type {
-            DevelopmentType::Backend => rng().random_range(20.0..80.0), // ms
-            DevelopmentType::Frontend => rng().random_range(5.0..30.0), // ms
-            DevelopmentType::DataScience => rng().random_range(100.0..500.0), // ms
-            DevelopmentType::Blockchain => rng().random_range(200.0..800.0), // ms
-            DevelopmentType::MachineLearning => rng().random_range(300.0..900.0), // ms
-            _ => rng().random_range(10.0..100.0),                       // ms
+            DevelopmentType::Backend => rng().random_range(20.0..80.0),
+            DevelopmentType::Frontend => rng().random_range(5.0..30.0),
+            DevelopmentType::DataScience => rng().random_range(100.0..500.0),
+            DevelopmentType::Blockchain => rng().random_range(200.0..800.0),
+            DevelopmentType::MachineLearning => rng().random_range(300.0..900.0),
+            _ => rng().random_range(10.0..100.0),
         };
 
         // Add some variation but keep it somewhat consistent

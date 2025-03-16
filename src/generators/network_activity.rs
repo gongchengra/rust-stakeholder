@@ -190,19 +190,17 @@ pub fn generate_method() -> String {
 
 pub fn generate_status() -> u16 {
     let status_codes = [
-        // 2xx Success
-        200, 201, 204, // 3xx Redirection
-        301, 302, 304, // 4xx Client Error
-        400, 401, 403, 404, 422, 429, // 5xx Server Error
-        500, 502, 503, 504,
+        200, 201, 204, // 2xx Success
+        301, 302, 304, // 3xx Redirection
+        400, 401, 403, 404, 422, 429, // 4xx Client Error
+        500, 502, 503, 504, // 5xx Server Error
     ];
 
     let weights = [
-        // 2xx - most common
-        60, 10, 5, // 3xx - less common
-        3, 3, 5, // 4xx - somewhat common
-        5, 3, 2, 8, 3, 2, // 5xx - least common
-        2, 1, 1, 1,
+        60, 10, 5, // 2xx - most common
+        3, 3, 5, // 3xx - less common
+        5, 3, 2, 8, 3, 2, // 4xx - somewhat common
+        2, 1, 1, 1, // 5xx - least common
     ];
 
     let dist = rand::distr::weighted::WeightedIndex::new(weights).unwrap();
