@@ -129,3 +129,7 @@ Contributing? That would involve actual coding. But if you insist:
 rust-stakeholder is satire. If your entire technical reputation is built on running a fake terminal program, I am not responsible for the inevitable moment when someone asks you to actually, you know, code something.
 
 I am also not responsible if you accidentally impress your way into a position you're completely unqualified for. Though if that happens... congrats, I guess?
+
+Though this may happen to you...
+
+![download](https://github.com/user-attachments/assets/c72ce8a7-a327-444d-b1a0-152dce73ea8a)
