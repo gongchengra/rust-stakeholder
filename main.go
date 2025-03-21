@@ -19,12 +19,26 @@ import (
 type DevelopmentType int
 
 const (
-	Backend DevelopmentType = iota
-	Frontend
-	FullStack
-	DevOps
-	Mobile
+    Backend DevelopmentType = iota
+    Frontend
+    Fullstack
+    DataScience
+    DevOps
+    Blockchain
+    MachineLearning
+    SystemsProgramming
+    GameDevelopment
+    Security
 )
+
+// 删除重复的 DevelopmentType 常量声明
+// const (
+//     Backend DevelopmentType = iota
+//     Frontend
+//     FullStack
+//     DevOps
+//     Mobile
+// )
 
 // JargonLevel 技术术语级别
 type JargonLevel int
@@ -327,141 +341,353 @@ func runSystemMonitoring(config *SessionConfig) {
     fmt.Printf("  - %s\n", generateSystemRecommendation())
 }
 
-// 添加新的生成器函数
-func generateMetricUnit(devType DevelopmentType) string {
-    units := map[DevelopmentType][]string{
-        Backend: {"req/s", "ms", "μs", "MB/s", "connections", "sessions", "%", "threads", "MB", "ops/s"},
-        Frontend: {"ms", "fps", "KB", "MB", "elements", "nodes", "req/s", "s", "μs", "%"},
-        // ... 可以添加其他类型的单位 ...
-    }
-    if metricUnits, ok := units[devType]; ok {
-        return metricUnits[rand.Intn(len(metricUnits))]
-    }
-    defaultUnits := []string{"ms", "s", "MB/s", "GB/s", "ops/s", "%", "MB", "KB", "count", "ratio"}
-    return defaultUnits[rand.Intn(len(defaultUnits))]
-}
-
-func generateOptimizationRecommendation(devType DevelopmentType) string {
-    recommendations := map[DevelopmentType][]string{
+// 添加术语生成器函数
+func generateCodeJargon(devType DevelopmentType, level JargonLevel) string {
+    basicTerms := map[DevelopmentType][]string{
         Backend: {
-            "Consider implementing request batching for high-volume endpoints",
-            "Database query optimization could improve response times by 15-20%",
-            "Adding a distributed cache layer would reduce database load",
-            // ... 添加更多建议 ...
+            "Optimized query execution paths for improved database throughput",
+            "Reduced API latency via connection pooling and request batching",
+            "Implemented stateless authentication with JWT token rotation",
+            "Applied circuit breaker pattern to prevent cascading failures",
+            "Utilized CQRS pattern for complex domain operations",
         },
         Frontend: {
-            "Implement code splitting to reduce initial bundle size",
-            "Consider lazy loading for off-screen components",
-            "Optimize critical rendering path for faster first paint",
-            // ... 添加更多建议 ...
+            "Implemented virtual DOM diffing for optimal rendering performance",
+            "Applied tree-shaking and code-splitting for bundle optimization",
+            "Utilized CSS containment for layout performance improvement",
+            "Implemented intersection observer for lazy-loading optimization",
+            "Reduced reflow calculations with CSS will-change property",
         },
-        // ... 可以添加其他类型的建议 ...
+        // ... 其他开发类型的基础术语 ...
     }
-    if typeRecommendations, ok := recommendations[devType]; ok {
-        return typeRecommendations[rand.Intn(len(typeRecommendations))]
-    }
-    return "Consider optimizing resource utilization"
-}
 
-func generatePerformanceMetric(devType DevelopmentType) string {
-    metrics := map[DevelopmentType][]string{
+    advancedTerms := map[DevelopmentType][]string{
         Backend: {
-            "API Response Time",
-            "Database Query Latency",
-            "Request Throughput",
-            "Cache Hit Ratio",
-            "Connection Pool Utilization",
+            "Implemented polyglot persistence with domain-specific data storage optimization",
+            "Applied event-driven architecture with CQRS and event sourcing for eventual consistency",
+            "Utilized domain-driven hexagonal architecture for maintainable business logic isolation",
+            "Implemented reactive non-blocking I/O with backpressure handling for system resilience",
+            "Applied saga pattern for distributed transaction management with compensating actions",
         },
         Frontend: {
-            "Render Time",
-            "First Contentful Paint",
-            "Time to Interactive",
-            "Bundle Size",
-            "DOM Node Count",
+            "Implemented compile-time static analysis for type-safe component composition",
+            "Applied atomic CSS methodology with tree-shakable style injection",
+            "Utilized custom rendering reconciliation with incremental DOM diffing",
+            "Implemented time-sliced rendering with priority-based task scheduling",
+            "Applied declarative animation system with hardware acceleration optimization",
+        },
+        // ... 其他开发类型的高级术语 ...
+    }
+
+    extremeTerms := []string{
+        "Implemented isomorphic polymorphic runtime with transpiled metaprogramming for cross-paradigm interoperability",
+        "Utilized quantum-resistant cryptographic primitives with homomorphic computation capabilities",
+        "Applied non-euclidean topology optimization for multi-dimensional data representation",
+        "Implemented stochastic gradient Langevin dynamics with cyclical annealing for robust convergence",
+        "Utilized differentiable neural computers with external memory addressing for complex reasoning tasks",
+    }
+
+    switch level {
+    case Low, Medium:
+        if terms, ok := basicTerms[devType]; ok && len(terms) > 0 {
+            return terms[rand.Intn(len(terms))]
+        }
+    case High:
+        if terms, ok := advancedTerms[devType]; ok && len(terms) > 0 {
+            return terms[rand.Intn(len(terms))]
+        }
+    case Expert:
+        if rand.Float32() < 0.7 {
+            return extremeTerms[rand.Intn(len(extremeTerms))]
+        } else if terms, ok := advancedTerms[devType]; ok && len(terms) > 0 {
+            return terms[rand.Intn(len(terms))]
+        }
+    }
+    return "Optimizing system performance and resource utilization"
+}
+
+func generatePerformanceJargon(devType DevelopmentType, level JargonLevel) string {
+    basicTerms := map[DevelopmentType][]string{
+        Backend: {
+            "Optimized request handling with connection pooling",
+            "Implemented caching layer for frequently accessed data",
+            "Applied query optimization for improved database performance",
+            "Utilized async I/O for non-blocking request processing",
+            "Implemented rate limiting to prevent resource contention",
+        },
+        Frontend: {
+            "Optimized rendering pipeline with virtual DOM diffing",
+            "Implemented code splitting for reduced initial load time",
+            "Applied tree-shaking for reduced bundle size",
+            "Utilized resource prioritization for critical path rendering",
+            "Implemented request batching for reduced network overhead",
         },
     }
-    if typeMetrics, ok := metrics[devType]; ok {
-        return typeMetrics[rand.Intn(len(typeMetrics))]
+
+    // ... 其他性能相关术语 ...
+    return getRandomTerm(devType, level, basicTerms)
+}
+
+func generateDataJargon(devType DevelopmentType, level JargonLevel) string {
+    basicTerms := map[DevelopmentType][]string{
+        DataScience: {
+            "Applied feature normalization for improved model convergence",
+            "Implemented data augmentation for enhanced training set diversity",
+            "Utilized cross-validation for robust model evaluation",
+            "Applied dimensionality reduction for feature space optimization",
+            "Implemented ensemble methods for improved prediction accuracy",
+        },
+        MachineLearning: {
+            "Applied feature normalization for improved model convergence",
+            "Implemented data augmentation for enhanced training set diversity",
+            "Utilized cross-validation for robust model evaluation",
+            "Applied dimensionality reduction for feature space optimization",
+            "Implemented ensemble methods for improved prediction accuracy",
+        },
     }
-    defaultMetrics := []string{"Processing Time", "Resource Usage", "Operation Latency"}
-    return defaultMetrics[rand.Intn(len(defaultMetrics))]
+
+    // ... 其他数据相关术语 ...
+    return getRandomTerm(devType, level, basicTerms)
+}
+
+func generateNetworkJargon(devType DevelopmentType, level JargonLevel) string {
+    basicTerms := map[DevelopmentType][]string{
+        Backend: {
+            "Optimized request batching for reduced network overhead",
+            "Implemented connection pooling for improved throughput",
+            "Applied response compression for bandwidth optimization",
+            "Utilized HTTP/2 multiplexing for parallel requests",
+            "Implemented retry strategies with exponential backoff",
+        },
+    }
+
+    // ... 其他网络相关术语 ...
+    return getRandomTerm(devType, level, basicTerms)
+}
+
+// 辅助函数，用于随机选择术语
+func getRandomTerm(devType DevelopmentType, level JargonLevel, terms map[DevelopmentType][]string) string {
+    if termList, ok := terms[devType]; ok && len(termList) > 0 {
+        return termList[rand.Intn(len(termList))]
+    }
+    return "Optimizing system performance"
+}
+
+func generateJargon(devType DevelopmentType, level JargonLevel) string {
+    basicTerms := map[DevelopmentType][]string{
+        Backend: {
+            "Optimized query execution paths for improved database throughput",
+            "Reduced API latency via connection pooling and request batching",
+            "Implemented stateless authentication with JWT token rotation",
+            "Applied circuit breaker pattern to prevent cascading failures",
+            "Utilized CQRS pattern for complex domain operations",
+        },
+        DataScience: {
+            "Applied regularization techniques to prevent overfitting",
+            "Implemented feature engineering pipeline with dimensionality reduction",
+            "Utilized distributed computing for parallel data processing",
+            "Optimized data transformations with vectorized operations",
+            "Applied statistical significance testing to validate results",
+        },
+        Blockchain: {
+            "Optimized transaction validation through merkle tree verification",
+            "Implemented sharding for improved blockchain throughput",
+            "Applied zero-knowledge proofs for privacy-preserving transactions",
+            "Utilized state channels for off-chain scaling optimization",
+            "Implemented consensus algorithm with Byzantine fault tolerance",
+        },
+        MachineLearning: {
+            "Applied gradient boosting for improved model performance",
+            "Implemented feature importance analysis for model interpretability",
+            "Utilized transfer learning to optimize training efficiency",
+            "Applied hyperparameter tuning with Bayesian optimization",
+            "Implemented ensemble methods for model robustness",
+        },
+        SystemsProgramming: {
+            "Optimized cache locality with data-oriented design patterns",
+            "Implemented zero-copy memory management for I/O operations",
+            "Applied lock-free algorithms for concurrent data structures",
+            "Utilized SIMD instructions for vectorized processing",
+            "Implemented memory pooling for reduced allocation overhead",
+        },
+        GameDevelopment: {
+            "Optimized spatial partitioning for collision detection performance",
+            "Implemented entity component system for flexible game architecture",
+            "Applied level of detail techniques for rendering optimization",
+            "Utilized GPU instancing for rendering large object counts",
+            "Implemented deterministic physics for consistent simulation",
+        },
+        Security: {
+            "Applied principle of least privilege across security boundaries",
+            "Implemented defense-in-depth strategies for layered security",
+            "Utilized cryptographic primitives for secure data exchange",
+            "Applied security by design with threat modeling methodology",
+            "Implemented zero-trust architecture for access control",
+        },
+    }
+
+    advancedTerms := map[DevelopmentType][]string{
+        Backend: {
+            "Implemented polyglot persistence with domain-specific data storage optimization",
+            "Applied event-driven architecture with CQRS and event sourcing for eventual consistency",
+            "Utilized domain-driven hexagonal architecture for maintainable business logic isolation",
+            "Implemented reactive non-blocking I/O with backpressure handling for system resilience",
+            "Applied saga pattern for distributed transaction management with compensating actions",
+        },
+        MachineLearning: {
+            "Implemented neural architecture search with reinforcement learning",
+            "Applied differentiable programming for end-to-end trainable pipelines",
+            "Utilized federated learning with secure aggregation protocols",
+            "Implemented attention mechanisms with sparse transformers",
+            "Applied meta-learning for few-shot adaptation capabilities",
+        },
+        Security: {
+            "Implemented homomorphic encryption for secure multi-party computation",
+            "Applied formal verification for cryptographic protocol security",
+            "Utilized post-quantum cryptographic primitives for forward security",
+            "Implemented secure multi-party computation with secret sharing",
+            "Applied hardware-backed trusted execution environments for secure enclaves",
+        },
+    }
+
+    extremeTerms := []string{
+        "Implemented isomorphic polymorphic runtime with transpiled metaprogramming for cross-paradigm interoperability",
+        "Utilized quantum-resistant cryptographic primitives with homomorphic computation capabilities",
+        "Applied non-euclidean topology optimization for multi-dimensional data representation",
+        "Implemented stochastic gradient Langevin dynamics with cyclical annealing for robust convergence",
+        "Utilized differentiable neural computers with external memory addressing for complex reasoning tasks",
+    }
+
+    switch level {
+    case Low, Medium:
+        if terms, ok := basicTerms[devType]; ok && len(terms) > 0 {
+            return terms[rand.Intn(len(terms))]
+        }
+    case High:
+        if terms, ok := advancedTerms[devType]; ok && len(terms) > 0 {
+            return terms[rand.Intn(len(terms))]
+        }
+    case Expert:
+        if rand.Float32() < 0.7 {
+            return extremeTerms[rand.Intn(len(extremeTerms))]
+        } else if terms, ok := advancedTerms[devType]; ok && len(terms) > 0 {
+            return terms[rand.Intn(len(terms))]
+        }
+    }
+
+    return "Optimizing system performance and resource utilization"
 }
 
 func runDataProcessing(config *SessionConfig) {
-	fmt.Println(yellow("Processing data streams..."))
-	fmt.Printf("Throughput: %d MB/s\n", rand.Intn(100)+50)
+    fmt.Println(blue("📊 Processing Data Streams"))
+    
+    dataPoints := rand.Intn(1000) + 500
+    bar := progressbar.NewOptions(dataPoints,
+        progressbar.OptionSetDescription("Processing data..."),
+        progressbar.OptionShowCount(),
+        progressbar.OptionSetTheme(progressbar.Theme{
+            Saucer:        "▰",
+            SaucerPadding: "▱",
+            BarStart:      "[",
+            BarEnd:        "]",
+        }))
+
+    for i := 0; i < dataPoints; i++ {
+        bar.Add(1)
+        if i%50 == 0 {
+            fmt.Printf("  🔄 %s\n", generateDataJargon(config.devType, config.jargonLevel))
+        }
+        time.Sleep(time.Duration(rand.Intn(50)+20) * time.Millisecond)
+    }
+
+    fmt.Printf("\n✅ Processed %d data points\n", dataPoints)
+    fmt.Printf("💡 Insight: %s\n", generateDataJargon(config.devType, config.jargonLevel))
 }
 
 func runNetworkActivity(config *SessionConfig) {
-	fmt.Println(green("Monitoring network activity..."))
-	fmt.Printf("Active connections: %d\n", rand.Intn(1000)+100)
+    fmt.Println(yellow("🌐 Monitoring Network Activity"))
+    
+    packets := rand.Intn(200) + 100
+    bar := progressbar.NewOptions(packets,
+        progressbar.OptionSetDescription("Analyzing network..."),
+        progressbar.OptionShowCount(),
+        progressbar.OptionSetTheme(progressbar.Theme{
+            Saucer:        "▰",
+            SaucerPadding: "▱",
+            BarStart:      "[",
+            BarEnd:        "]",
+        }))
+
+    for i := 0; i < packets; i++ {
+        bar.Add(1)
+        if i%20 == 0 {
+            fmt.Printf("  📡 %s\n", generateNetworkJargon(config.devType, config.jargonLevel))
+        }
+        time.Sleep(time.Duration(rand.Intn(100)+50) * time.Millisecond)
+    }
+
+    fmt.Printf("\n📊 Network Analysis Complete\n")
+    fmt.Printf("💡 Optimization: %s\n", generateNetworkJargon(config.devType, config.jargonLevel))
 }
 
 func displayRandomAlert(config *SessionConfig) {
-	alerts := []string{
-		"Warning: High memory usage detected",
-		"Notice: Network latency spike observed",
-		"Alert: CPU utilization above threshold",
-		"Warning: Database connection pool near capacity",
-	}
-	fmt.Println(red(alerts[rand.Intn(len(alerts))]))
+    alerts := []string{
+        "⚠️ High memory usage detected in worker process",
+        "🔄 Auto-scaling triggered due to increased load",
+        "📈 Performance threshold exceeded in API endpoint",
+        "🔍 Unusual pattern detected in request flow",
+        "⚡ Cache hit ratio below optimal threshold",
+    }
+    fmt.Printf("\n%s\n", alerts[rand.Intn(len(alerts))])
 }
 
 func displayTeamActivity(config *SessionConfig) {
-	activities := []string{
-		"Team member pushing changes to repository",
-		"Code review requested for feature branch",
-		"CI/CD pipeline triggered by recent commit",
-		"Team chat message received",
-	}
-	fmt.Println(blue(activities[rand.Intn(len(activities))]))
-}
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
+    activities := []string{
+        "👩‍💻 Team member pushing code updates",
+        "👨‍💻 Code review in progress",
+        "🤝 Merge request approved",
+        "📝 Documentation update submitted",
+        "🔧 Configuration changes deployed",
+    }
+    fmt.Printf("\n%s\n", activities[rand.Intn(len(activities))])
 }
 
 func getCodeAnalysisTitle(devType DevelopmentType, framework string) string {
-    frameworkSpecific := ""
+    frameworkStr := ""
     if framework != "" {
-        frameworkSpecific = fmt.Sprintf(" (%s specific)", framework)
+        frameworkStr = fmt.Sprintf(" (%s)", framework)
     }
-
-    titles := map[DevelopmentType]string{
-        Backend:  fmt.Sprintf("🔍 Running Code Analysis on API Components%s", frameworkSpecific),
-        Frontend: fmt.Sprintf("🔍 Analyzing UI Components%s", frameworkSpecific),
-        FullStack: "🔍 Analyzing Full-Stack Integration Points",
-        DevOps:    "🔍 Analyzing Infrastructure Configuration",
-        Mobile:    "🔍 Analyzing Mobile App Components",
-    }
-
-    if title, ok := titles[devType]; ok {
-        return title
-    }
-    return "🔍 Running Code Analysis"
+    return fmt.Sprintf("🔍 Running Code Analysis%s", frameworkStr)
 }
 
 func generateFileName(devType DevelopmentType) string {
-    backendFiles := []string{"api.go", "service.go", "repository.go", "middleware.go", "handler.go"}
-    frontendFiles := []string{"app.js", "component.tsx", "styles.css", "utils.js", "router.js"}
-
-    switch devType {
-    case Backend:
-        return backendFiles[rand.Intn(len(backendFiles))]
-    case Frontend:
-        return frontendFiles[rand.Intn(len(frontendFiles))]
-    default:
-        return fmt.Sprintf("file_%d.txt", rand.Intn(100))
+    extensions := map[DevelopmentType][]string{
+        Backend:     {".go", ".rs", ".java", ".py"},
+        Frontend:    {".js", ".ts", ".vue", ".jsx"},
+        Fullstack:   {".ts", ".go", ".py", ".jsx"},
     }
+
+    prefixes := []string{"service", "controller", "model", "util", "helper"}
+    names := []string{"user", "auth", "data", "config", "api"}
+
+    ext := ".go"
+    if exts, ok := extensions[devType]; ok {
+        ext = exts[rand.Intn(len(exts))]
+    }
+
+    prefix := prefixes[rand.Intn(len(prefixes))]
+    name := names[rand.Intn(len(names))]
+
+    return fmt.Sprintf("%s_%s%s", prefix, name, ext)
 }
 
 func generateCodeIssue(devType DevelopmentType) string {
     issues := []string{
         "Potential memory leak",
-        "Unused variable",
-        "Complex function",
-        "Missing error handling",
-        "Code duplication",
+        "Uncaught exception",
+        "Resource not released",
+        "Inefficient algorithm",
+        "Security vulnerability",
     }
     return issues[rand.Intn(len(issues))]
 }
@@ -472,34 +698,17 @@ func generateComplexityMetric() string {
         "Cognitive complexity: 8",
         "Maintainability index: 75",
         "Code coverage: 85%",
+        "Technical debt ratio: 5%",
     }
     return metrics[rand.Intn(len(metrics))]
 }
 
 func getPerformanceTitle(devType DevelopmentType) string {
-    titles := map[DevelopmentType]string{
-        Backend:   "⚡ Analyzing API Response Time",
-        Frontend:  "⚡ Measuring UI Rendering Performance",
-        FullStack: "⚡ Evaluating End-to-End Performance",
-        DevOps:    "⚡ Evaluating Infrastructure Performance",
-        Mobile:    "⚡ Analyzing Mobile App Performance",
-    }
-
-    if title, ok := titles[devType]; ok {
-        return title
-    }
-    return "⚡ Analyzing Performance"
+    return "⚡ Performance Analysis"
 }
 
 func generateBasePerformance(devType DevelopmentType) float64 {
-    switch devType {
-    case Backend:
-        return float64(rand.Intn(60) + 20)
-    case Frontend:
-        return float64(rand.Intn(25) + 5)
-    default:
-        return float64(rand.Intn(90) + 10)
-    }
+    return 50.0 + rand.Float64()*30.0
 }
 
 func calculateAverage(data []float64) float64 {
@@ -513,34 +722,88 @@ func calculateAverage(data []float64) float64 {
     return sum / float64(len(data))
 }
 
-func formatResourceValue(value, highThreshold, mediumThreshold int) string {
-    str := fmt.Sprintf("%d%%", value)
-    if value > highThreshold {
-        return red(str)
-    } else if value > mediumThreshold {
-        return yellow(str)
+func generatePerformanceMetric(devType DevelopmentType) string {
+    metrics := map[DevelopmentType][]string{
+        Backend: {"Response time", "Throughput", "Error rate", "Queue length", "Cache hit ratio"},
+        Frontend: {"Time to interactive", "First paint", "Bundle size", "Memory usage", "Frame rate"},
+        Fullstack: {"End-to-end latency", "API response time", "Database queries", "Cache efficiency", "Network latency"},
     }
-    return green(str)
+    
+    if metricList, ok := metrics[devType]; ok {
+        return metricList[rand.Intn(len(metricList))]
+    }
+    return "Performance metric"
+}
+
+func generateMetricUnit(devType DevelopmentType) string {
+    units := map[DevelopmentType][]string{
+        Backend: {"req/s", "ms", "μs", "MB/s", "connections"},
+        Frontend: {"ms", "KB", "fps", "MB", "req/s"},
+        Fullstack: {"ms", "req/s", "MB/s", "ops/s", "connections"},
+    }
+    
+    if unitList, ok := units[devType]; ok {
+        return unitList[rand.Intn(len(unitList))]
+    }
+    return "units"
+}
+
+func generateOptimizationRecommendation(devType DevelopmentType) string {
+    recommendations := map[DevelopmentType][]string{
+        Backend: {
+            "Consider implementing request caching to reduce database load",
+            "Optimize database query patterns for improved throughput",
+            "Implement connection pooling for better resource utilization",
+            "Add request compression for reduced network overhead",
+            "Consider implementing circuit breakers for external services",
+        },
+        Frontend: {
+            "Implement lazy loading for improved initial load time",
+            "Consider code splitting for optimized bundle size",
+            "Add service worker for offline capabilities",
+            "Optimize critical rendering path",
+            "Implement resource prioritization",
+        },
+    }
+    
+    if recList, ok := recommendations[devType]; ok {
+        return recList[rand.Intn(len(recList))]
+    }
+    return "Consider optimizing system performance"
+}
+
+func formatResourceValue(value, warningThreshold, criticalThreshold int) string {
+    if value >= criticalThreshold {
+        return red(fmt.Sprintf("%d%%", value))
+    }
+    if value >= warningThreshold {
+        return yellow(fmt.Sprintf("%d%%", value))
+    }
+    return green(fmt.Sprintf("%d%%", value))
 }
 
 func generateSystemEvent() string {
     events := []string{
-        "Service auto-scaling triggered",
+        "Container auto-scaling event triggered",
         "Cache invalidation completed",
-        "Background job completed",
-        "Config reload successful",
-        "Backup process initiated",
+        "Background job processing completed",
+        "System health check passed",
+        "Metrics collection cycle completed",
+        "Log rotation executed",
+        "Configuration refresh completed",
+        "Resource cleanup task executed",
     }
     return events[rand.Intn(len(events))]
 }
 
 func generateSystemRecommendation() string {
     recommendations := []string{
-        "Consider increasing cache size",
-        "Optimize background job frequency",
-        "Review auto-scaling thresholds",
-        "Implement resource usage alerts",
-        "Schedule routine maintenance",
+        "Consider increasing cache size for improved performance",
+        "Optimize background job scheduling for better resource utilization",
+        "Review logging levels to reduce I/O overhead",
+        "Consider implementing request rate limiting",
+        "Optimize database connection pool settings",
+        "Review auto-scaling thresholds for better resource efficiency",
     }
     return recommendations[rand.Intn(len(recommendations))]
 }
