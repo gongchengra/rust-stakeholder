@@ -1,16 +1,18 @@
 package main
 
 import (
-	"fmt"
-	"math/rand"
-	"os"
-	"os/signal"
-	// 删除未使用的 strings 包
-	"sync/atomic"
-	"syscall"
-	"time"
+    "fmt"
+    "math"
+    "math/rand"
+    "os"
+    "os/signal"
+    "sort"
+    "sync/atomic"
+    "syscall"
+    "time"
 
-	"github.com/fatih/color"
+    "github.com/fatih/color"
+    "github.com/schollz/progressbar/v3"
 )
 
 // DevelopmentType 开发活动类型
@@ -179,19 +181,210 @@ func displayBootSequence(config *SessionConfig) {
 	time.Sleep(500 * time.Millisecond)
 }
 
+// 首先添加必要的依赖
 func runCodeAnalysis(config *SessionConfig) {
-	fmt.Println(blue("Analyzing code structure..."))
-	fmt.Println(yellow("Scanning dependencies..."))
+    filesToAnalyze := rand.Intn(20) + 5
+    totalLines := rand.Intn(9000) + 1000
+
+    title := getCodeAnalysisTitle(config.devType, config.framework)
+    fmt.Println(blue(title))
+
+    // 创建进度条
+    bar := progressbar.NewOptions(filesToAnalyze,
+        progressbar.OptionSetDescription("Analyzing files..."),
+        progressbar.OptionShowCount(),
+        progressbar.OptionShowIts(),
+        progressbar.OptionSetTheme(progressbar.Theme{
+            Saucer:        "▰",
+            SaucerPadding: "▱",
+            BarStart:      "[",
+            BarEnd:        "]",
+        }))
+
+    for i := 0; i < filesToAnalyze; i++ {
+        bar.Add(1)
+        if rand.Float32() < 0.3 {
+            fileName := generateFileName(config.devType)
+            issueType := generateCodeIssue(config.devType)
+            complexity := generateComplexityMetric()
+
+            if rand.Float32() < 0.25 {
+                fmt.Printf("  ⚠️ %s - %s: %s\n", fileName, issueType, complexity)
+            } else {
+                fmt.Printf("  ✓ %s - %s\n", fileName, complexity)
+            }
+        }
+        time.Sleep(time.Duration(rand.Intn(200)+100) * time.Millisecond)
+    }
+
+    // 分析总结
+    fmt.Printf("\n📊 Analysis Complete: %d files, %d lines of code\n", filesToAnalyze, totalLines)
+    fmt.Printf("  - Issues found: %d\n", rand.Intn(5))
+    fmt.Printf("  - Code quality score: %d%%\n", rand.Intn(14)+85)
+    fmt.Printf("  - Technical debt: %d%%\n", rand.Intn(14)+1)
 }
 
+// 扩充性能指标功能
 func runPerformanceMetrics(config *SessionConfig) {
-	fmt.Println(green("Collecting performance metrics..."))
-	fmt.Printf("CPU Usage: %d%%\n", rand.Intn(60)+20)
+    title := getPerformanceTitle(config.devType)
+    fmt.Println(yellow(title))
+
+    iterations := rand.Intn(150) + 50
+    bar := progressbar.NewOptions(iterations,
+        progressbar.OptionSetDescription("Collecting metrics..."),
+        progressbar.OptionShowCount(),
+        progressbar.OptionSetTheme(progressbar.Theme{
+            Saucer:        "▰",
+            SaucerPadding: "▱",
+            BarStart:      "[",
+            BarEnd:        "]",
+        }))
+
+    var performanceData []float64
+
+    for i := 0; i < iterations; i++ {
+        bar.Add(1)
+        basePerf := generateBasePerformance(config.devType)
+        jitter := (rand.Float64() * 10) - 5
+        perfValue := math.Max(basePerf+jitter, 1.0)
+        performanceData = append(performanceData, perfValue)
+
+        if i%10 == 0 && rand.Float32() < 0.3 {
+            metricName := generatePerformanceMetric(config.devType)
+            metricValue := rand.Intn(989) + 10
+            metricUnit := generateMetricUnit(config.devType)
+            fmt.Printf("  📊 %s: %d %s\n", metricName, metricValue, metricUnit)
+        }
+
+        time.Sleep(time.Duration(rand.Intn(50)+50) * time.Millisecond)
+    }
+
+    // 计算并显示指标
+    sort.Float64s(performanceData)
+    avg := calculateAverage(performanceData)
+    median := performanceData[len(performanceData)/2]
+    p95 := performanceData[int(float64(len(performanceData))*0.95)]
+    p99 := performanceData[int(float64(len(performanceData))*0.99)]
+
+    fmt.Println("\n📈 Performance Results:")
+    fmt.Printf("  - Average: %.2f ms\n", avg)
+    fmt.Printf("  - Median: %.2f ms\n", median)
+    fmt.Printf("  - P95: %.2f ms\n", p95)
+    fmt.Printf("  - P99: %.2f ms\n", p99)
+
+    // 添加优化建议
+    fmt.Printf("💡 Recommendation: %s\n", generateOptimizationRecommendation(config.devType))
 }
 
+// 扩充系统监控功能
 func runSystemMonitoring(config *SessionConfig) {
-	fmt.Println(blue("Monitoring system resources..."))
-	fmt.Printf("Memory utilization: %d%%\n", rand.Intn(40)+30)
+    fmt.Println(green("🖥️ System Resource Monitoring"))
+
+    duration := rand.Intn(10) + 5
+    bar := progressbar.NewOptions(duration,
+        progressbar.OptionSetDescription("Monitoring..."),
+        progressbar.OptionShowCount(),
+        progressbar.OptionSetTheme(progressbar.Theme{
+            Saucer:        "▰",
+            SaucerPadding: "▱",
+            BarStart:      "[",
+            BarEnd:        "]",
+        }))
+
+    cpuBase := rand.Intn(50) + 10
+    memoryBase := rand.Intn(40) + 30
+    networkBase := rand.Intn(19) + 1
+    diskBase := rand.Intn(35) + 5
+
+    for i := 0; i < duration; i++ {
+        bar.Add(1)
+
+        cpu := cpuBase + rand.Intn(15) - 5
+        memory := memoryBase + rand.Intn(8) - 3
+        network := networkBase + rand.Intn(4) - 1
+        disk := diskBase + rand.Intn(6) - 2
+        processes := rand.Intn(120) + 80
+
+        cpuStr := formatResourceValue(cpu, 80, 60)
+        memStr := formatResourceValue(memory, 85, 70)
+
+        fmt.Printf("  CPU: %s  |  RAM: %s  |  Network: %d MB/s  |  Disk I/O: %d MB/s  |  Processes: %d\n",
+            cpuStr, memStr, network, disk, processes)
+
+        if i%3 == 0 && rand.Float32() < 0.3 {
+            fmt.Printf("  🔄 %s\n", generateSystemEvent())
+        }
+
+        time.Sleep(time.Duration(rand.Intn(300)+200) * time.Millisecond)
+    }
+
+    // 显示总结
+    fmt.Println("\n📊 Resource Utilization Summary:")
+    fmt.Printf("  - Peak CPU: %d%%\n", cpuBase+rand.Intn(10)+5)
+    fmt.Printf("  - Peak Memory: %d%%\n", memoryBase+rand.Intn(10)+5)
+    fmt.Printf("  - Network Throughput: %d MB/s\n", networkBase+rand.Intn(5)+5)
+    fmt.Printf("  - Disk Throughput: %d MB/s\n", diskBase+rand.Intn(6)+2)
+    fmt.Printf("  - %s\n", generateSystemRecommendation())
+}
+
+// 添加新的生成器函数
+func generateMetricUnit(devType DevelopmentType) string {
+    units := map[DevelopmentType][]string{
+        Backend: {"req/s", "ms", "μs", "MB/s", "connections", "sessions", "%", "threads", "MB", "ops/s"},
+        Frontend: {"ms", "fps", "KB", "MB", "elements", "nodes", "req/s", "s", "μs", "%"},
+        // ... 可以添加其他类型的单位 ...
+    }
+    if metricUnits, ok := units[devType]; ok {
+        return metricUnits[rand.Intn(len(metricUnits))]
+    }
+    defaultUnits := []string{"ms", "s", "MB/s", "GB/s", "ops/s", "%", "MB", "KB", "count", "ratio"}
+    return defaultUnits[rand.Intn(len(defaultUnits))]
+}
+
+func generateOptimizationRecommendation(devType DevelopmentType) string {
+    recommendations := map[DevelopmentType][]string{
+        Backend: {
+            "Consider implementing request batching for high-volume endpoints",
+            "Database query optimization could improve response times by 15-20%",
+            "Adding a distributed cache layer would reduce database load",
+            // ... 添加更多建议 ...
+        },
+        Frontend: {
+            "Implement code splitting to reduce initial bundle size",
+            "Consider lazy loading for off-screen components",
+            "Optimize critical rendering path for faster first paint",
+            // ... 添加更多建议 ...
+        },
+        // ... 可以添加其他类型的建议 ...
+    }
+    if typeRecommendations, ok := recommendations[devType]; ok {
+        return typeRecommendations[rand.Intn(len(typeRecommendations))]
+    }
+    return "Consider optimizing resource utilization"
+}
+
+func generatePerformanceMetric(devType DevelopmentType) string {
+    metrics := map[DevelopmentType][]string{
+        Backend: {
+            "API Response Time",
+            "Database Query Latency",
+            "Request Throughput",
+            "Cache Hit Ratio",
+            "Connection Pool Utilization",
+        },
+        Frontend: {
+            "Render Time",
+            "First Contentful Paint",
+            "Time to Interactive",
+            "Bundle Size",
+            "DOM Node Count",
+        },
+    }
+    if typeMetrics, ok := metrics[devType]; ok {
+        return typeMetrics[rand.Intn(len(typeMetrics))]
+    }
+    defaultMetrics := []string{"Processing Time", "Resource Usage", "Operation Latency"}
+    return defaultMetrics[rand.Intn(len(defaultMetrics))]
 }
 
 func runDataProcessing(config *SessionConfig) {
@@ -226,4 +419,128 @@ func displayTeamActivity(config *SessionConfig) {
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
+}
+
+func getCodeAnalysisTitle(devType DevelopmentType, framework string) string {
+    frameworkSpecific := ""
+    if framework != "" {
+        frameworkSpecific = fmt.Sprintf(" (%s specific)", framework)
+    }
+
+    titles := map[DevelopmentType]string{
+        Backend:  fmt.Sprintf("🔍 Running Code Analysis on API Components%s", frameworkSpecific),
+        Frontend: fmt.Sprintf("🔍 Analyzing UI Components%s", frameworkSpecific),
+        FullStack: "🔍 Analyzing Full-Stack Integration Points",
+        DevOps:    "🔍 Analyzing Infrastructure Configuration",
+        Mobile:    "🔍 Analyzing Mobile App Components",
+    }
+
+    if title, ok := titles[devType]; ok {
+        return title
+    }
+    return "🔍 Running Code Analysis"
+}
+
+func generateFileName(devType DevelopmentType) string {
+    backendFiles := []string{"api.go", "service.go", "repository.go", "middleware.go", "handler.go"}
+    frontendFiles := []string{"app.js", "component.tsx", "styles.css", "utils.js", "router.js"}
+
+    switch devType {
+    case Backend:
+        return backendFiles[rand.Intn(len(backendFiles))]
+    case Frontend:
+        return frontendFiles[rand.Intn(len(frontendFiles))]
+    default:
+        return fmt.Sprintf("file_%d.txt", rand.Intn(100))
+    }
+}
+
+func generateCodeIssue(devType DevelopmentType) string {
+    issues := []string{
+        "Potential memory leak",
+        "Unused variable",
+        "Complex function",
+        "Missing error handling",
+        "Code duplication",
+    }
+    return issues[rand.Intn(len(issues))]
+}
+
+func generateComplexityMetric() string {
+    metrics := []string{
+        "Cyclomatic complexity: 15",
+        "Cognitive complexity: 8",
+        "Maintainability index: 75",
+        "Code coverage: 85%",
+    }
+    return metrics[rand.Intn(len(metrics))]
+}
+
+func getPerformanceTitle(devType DevelopmentType) string {
+    titles := map[DevelopmentType]string{
+        Backend:   "⚡ Analyzing API Response Time",
+        Frontend:  "⚡ Measuring UI Rendering Performance",
+        FullStack: "⚡ Evaluating End-to-End Performance",
+        DevOps:    "⚡ Evaluating Infrastructure Performance",
+        Mobile:    "⚡ Analyzing Mobile App Performance",
+    }
+
+    if title, ok := titles[devType]; ok {
+        return title
+    }
+    return "⚡ Analyzing Performance"
+}
+
+func generateBasePerformance(devType DevelopmentType) float64 {
+    switch devType {
+    case Backend:
+        return float64(rand.Intn(60) + 20)
+    case Frontend:
+        return float64(rand.Intn(25) + 5)
+    default:
+        return float64(rand.Intn(90) + 10)
+    }
+}
+
+func calculateAverage(data []float64) float64 {
+    if len(data) == 0 {
+        return 0
+    }
+    sum := 0.0
+    for _, v := range data {
+        sum += v
+    }
+    return sum / float64(len(data))
+}
+
+func formatResourceValue(value, highThreshold, mediumThreshold int) string {
+    str := fmt.Sprintf("%d%%", value)
+    if value > highThreshold {
+        return red(str)
+    } else if value > mediumThreshold {
+        return yellow(str)
+    }
+    return green(str)
+}
+
+func generateSystemEvent() string {
+    events := []string{
+        "Service auto-scaling triggered",
+        "Cache invalidation completed",
+        "Background job completed",
+        "Config reload successful",
+        "Backup process initiated",
+    }
+    return events[rand.Intn(len(events))]
+}
+
+func generateSystemRecommendation() string {
+    recommendations := []string{
+        "Consider increasing cache size",
+        "Optimize background job frequency",
+        "Review auto-scaling thresholds",
+        "Implement resource usage alerts",
+        "Schedule routine maintenance",
+    }
+    return recommendations[rand.Intn(len(recommendations))]
 }
