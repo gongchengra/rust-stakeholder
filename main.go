@@ -595,15 +595,135 @@ func runDataProcessing(config *SessionConfig) {
     for i := 0; i < dataPoints; i++ {
         bar.Add(1)
         if i%50 == 0 {
-            fmt.Printf("  🔄 %s\n", generateDataJargon(config.devType, config.jargonLevel))
+            operation := generateDataOperation(config.devType)
+            subOperation := generateDataSubOperation(config.devType)
+            fmt.Printf("  🔄 %s\n", operation)
+            fmt.Printf("    ↳ %s\n", subOperation)
         }
         time.Sleep(time.Duration(rand.Intn(50)+20) * time.Millisecond)
     }
 
     fmt.Printf("\n✅ Processed %d data points\n", dataPoints)
-    fmt.Printf("💡 Insight: %s\n", generateDataJargon(config.devType, config.jargonLevel))
+    fmt.Printf("💡 Results: %s\n", generateDataDetails(config.devType))
 }
 
+func generateEndpoint(devType DevelopmentType) string {
+    endpoints := map[DevelopmentType][]string{
+        Backend: {
+            "/api/v1/users",
+            "/api/v1/users/{id}",
+            "/api/v1/products",
+            "/api/v1/orders",
+            "/api/v1/payments",
+            "/api/v1/auth/login",
+            "/api/v1/auth/refresh",
+            "/api/v1/analytics/report",
+            "/api/v1/notifications",
+            "/api/v1/system/health",
+            "/api/v2/recommendations",
+            "/internal/metrics",
+            "/internal/cache/flush",
+            "/webhook/payment-provider",
+            "/graphql",
+        },
+        Frontend: {
+            "/assets/main.js",
+            "/assets/styles.css",
+            "/api/v1/user-preferences",
+            "/api/v1/cart",
+            "/api/v1/products/featured",
+            "/api/v1/auth/session",
+            "/assets/fonts/roboto.woff2",
+            "/api/v1/notifications/unread",
+            "/assets/images/hero.webp",
+            "/api/v1/search/autocomplete",
+            "/socket.io/",
+            "/api/v1/analytics/client-events",
+            "/manifest.json",
+            "/service-worker.js",
+            "/api/v1/feature-flags",
+        },
+        // ... 其他开发类型的端点与 Rust 代码保持一致 ...
+    }
+
+    if endpointList, ok := endpoints[devType]; ok && len(endpointList) > 0 {
+        return endpointList[rand.Intn(len(endpointList))]
+    }
+    return "/api/v1/default"
+}
+
+func generateMethod() string {
+    methods := []string{"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"}
+    weights := []int{15, 8, 5, 3, 2, 1, 1} // 权重分布
+    
+    totalWeight := 0
+    for _, w := range weights {
+        totalWeight += w
+    }
+    
+    r := rand.Intn(totalWeight)
+    for i, w := range weights {
+        r -= w
+        if r < 0 {
+            return methods[i]
+        }
+    }
+    return "GET"
+}
+
+func generateStatus() int {
+    statusCodes := []int{
+        200, 201, 204, // 2xx Success
+        301, 302, 304, // 3xx Redirection
+        400, 401, 403, 404, 422, 429, // 4xx Client Error
+        500, 502, 503, 504, // 5xx Server Error
+    }
+    weights := []int{
+        60, 10, 5, // 2xx - most common
+        3, 3, 5,   // 3xx - less common
+        5, 3, 2, 8, 3, 2, // 4xx - somewhat common
+        2, 1, 1, 1, // 5xx - least common
+    }
+    
+    totalWeight := 0
+    for _, w := range weights {
+        totalWeight += w
+    }
+    
+    r := rand.Intn(totalWeight)
+    for i, w := range weights {
+        r -= w
+        if r < 0 {
+            return statusCodes[i]
+        }
+    }
+    return 200
+}
+
+func generateRequestDetails(devType DevelopmentType) string {
+    details := map[DevelopmentType][]string{
+        Backend: {
+            "Content-Type: application/json, User authenticated, Rate limit: 1000/hour",
+            "Database queries: 3, Cache hit ratio: 85%, Auth: JWT",
+            "Processed in service layer, Business rules applied: 5, Validation passed",
+            "Using connection pool, Transaction isolation: READ_COMMITTED",
+            "Response compression: gzip, Caching: public, max-age=3600",
+            "API version: v1, Deprecation warning: Use v2 endpoint",
+            "Rate limited client: example-corp, Remaining: 240/minute",
+            "Downstream services: payment-service, notification-service",
+            "Tenant: acme-corp, Shard: eu-central-1-b, Replica: 3",
+            "Auth scopes: read:users,write:orders, Principal: system-service",
+        },
+        // ... 其他开发类型的详细信息与 Rust 代码保持一致 ...
+    }
+
+    if detailList, ok := details[devType]; ok && len(detailList) > 0 {
+        return detailList[rand.Intn(len(detailList))]
+    }
+    return "Request processed successfully"
+}
+
+// 更新现有的 runNetworkActivity 函数
 func runNetworkActivity(config *SessionConfig) {
     fmt.Println(yellow("🌐 Monitoring Network Activity"))
     
@@ -621,7 +741,20 @@ func runNetworkActivity(config *SessionConfig) {
     for i := 0; i < packets; i++ {
         bar.Add(1)
         if i%20 == 0 {
-            fmt.Printf("  📡 %s\n", generateNetworkJargon(config.devType, config.jargonLevel))
+            method := generateMethod()
+            endpoint := generateEndpoint(config.devType)
+            status := generateStatus()
+            details := generateRequestDetails(config.devType)
+            
+            statusColor := green
+            if status >= 400 {
+                statusColor = red
+            } else if status >= 300 {
+                statusColor = yellow
+            }
+            
+            fmt.Printf("  📡 %s %s → %s\n", method, endpoint, statusColor(fmt.Sprintf("%d", status)))
+            fmt.Printf("     ↳ %s\n", details)
         }
         time.Sleep(time.Duration(rand.Intn(100)+50) * time.Millisecond)
     }
@@ -722,10 +855,142 @@ func calculateAverage(data []float64) float64 {
     return sum / float64(len(data))
 }
 
+func generateDataOperation(devType DevelopmentType) string {
+    operations := map[DevelopmentType][]string{
+        Backend: {
+            "Processing batch transactions",
+            "Syncing database replicas",
+            "Aggregating analytics data",
+            "Generating user activity reports",
+            "Optimizing database indexes",
+            "Compressing log archives",
+            "Validating data integrity",
+            "Processing webhook events",
+            "Migrating legacy data",
+            "Generating API documentation",
+        },
+        Frontend: {
+            "Processing user interaction events",
+            "Optimizing rendering performance data",
+            "Analyzing component render times",
+            "Compressing asset bundles",
+            "Processing form submission data",
+            "Validating client-side data",
+            "Generating localization files",
+            "Analyzing user session flows",
+            "Optimizing client-side caching",
+            "Processing offline data sync",
+        },
+    }
+
+    if opList, ok := operations[devType]; ok && len(opList) > 0 {
+        return opList[rand.Intn(len(opList))]
+    }
+    return "Processing data"
+}
+
+func generateDataSubOperation(devType DevelopmentType) string {
+    subOperations := map[DevelopmentType][]string{
+        Backend: {
+            "Applying data normalization rules",
+            "Validating referential integrity",
+            "Optimizing query execution plan",
+            "Applying business rule validations",
+            "Processing data transformation mappings",
+            "Applying schema validation rules",
+            "Executing incremental data updates",
+            "Processing conditional logic branches",
+            "Applying security filtering rules",
+            "Executing transaction compensation logic",
+        },
+        Frontend: {
+            "Applying data binding transformations",
+            "Validating input constraints",
+            "Optimizing render tree calculations",
+            "Processing event propagation",
+            "Applying localization transforms",
+            "Validating UI state consistency",
+            "Processing animation frame calculations",
+            "Applying accessibility transformations",
+            "Executing conditional rendering logic",
+            "Processing style calculation optimizations",
+        },
+    }
+
+    if subOpList, ok := subOperations[devType]; ok && len(subOpList) > 0 {
+        return subOpList[rand.Intn(len(subOpList))]
+    }
+    return "Processing sub-operation"
+}
+
+func generateDataDetails(devType DevelopmentType) string {
+    details := map[DevelopmentType][]string{
+        Backend: {
+            "Reduced database query time by 35% through index optimization",
+            "Improved data integrity by implementing transaction boundaries",
+            "Reduced API response size by 42% through selective field inclusion",
+            "Optimized cache hit ratio increased to 87%",
+            "Implemented sharded processing for 4.5x throughput improvement",
+            "Reduced duplicate processing by implementing idempotency keys",
+            "Applied compression resulting in 68% storage reduction",
+            "Improved validation speed by 29% through optimized rule execution",
+            "Reduced error rate from 2.3% to 0.5% with improved validation",
+            "Implemented batch processing for 3.2x throughput improvement",
+        },
+        Frontend: {
+            "Reduced bundle size by 28% through tree-shaking optimization",
+            "Improved render performance by 45% with memo optimization",
+            "Reduced time-to-interactive by 1.2 seconds",
+            "Implemented virtualized rendering for 5x scrolling performance",
+            "Reduced network payload by 37% through selective data loading",
+            "Improved animation smoothness with requestAnimationFrame optimization",
+            "Reduced layout thrashing by 82% with optimized DOM operations",
+            "Implemented progressive loading for 2.3s perceived performance improvement",
+            "Improved form submission speed by 40% with optimized validation",
+            "Reduced memory usage by 35% with proper cleanup of event listeners",
+        },
+    }
+
+    if detailList, ok := details[devType]; ok && len(detailList) > 0 {
+        return detailList[rand.Intn(len(detailList))]
+    }
+    return "Optimized data processing performance"
+}
+
+func generateMetricUnit(devType DevelopmentType) string {
+    units := map[DevelopmentType][]string{
+        DataScience: {
+            "MB/s", "GB/s", "records/s", "samples/s", "iterations/s",
+            "ms/batch", "s/epoch", "%", "MB", "GB",
+        },
+        Backend: {
+            "req/s", "ms", "μs", "MB/s", "connections",
+            "sessions", "%", "threads", "MB", "ops/s",
+        },
+        Frontend: {
+            "ms", "fps", "KB", "MB", "elements",
+            "nodes", "req/s", "s", "μs", "%",
+        },
+    }
+
+    if unitList, ok := units[devType]; ok && len(unitList) > 0 {
+        return unitList[rand.Intn(len(unitList))]
+    }
+    return "ms"
+}
+
 func generatePerformanceMetric(devType DevelopmentType) string {
     metrics := map[DevelopmentType][]string{
-        Backend: {"Response time", "Throughput", "Error rate", "Queue length", "Cache hit ratio"},
-        Frontend: {"Time to interactive", "First paint", "Bundle size", "Memory usage", "Frame rate"},
+        Backend: {
+            "API Response Time", "Database Query Latency", "Request Throughput",
+            "Cache Hit Ratio", "Connection Pool Utilization", "Thread Pool Saturation",
+            "Queue Depth", "Active Sessions", "Error Rate", "GC Pause Time",
+        },
+        Frontend: {
+            "Render Time", "First Contentful Paint", "Time to Interactive",
+            "Bundle Size", "DOM Node Count", "Frame Rate", "Memory Usage",
+            "Network Request Count", "Asset Load Time", "Input Latency",
+        },
         Fullstack: {"End-to-end latency", "API response time", "Database queries", "Cache efficiency", "Network latency"},
     }
     
@@ -735,35 +1000,33 @@ func generatePerformanceMetric(devType DevelopmentType) string {
     return "Performance metric"
 }
 
-func generateMetricUnit(devType DevelopmentType) string {
-    units := map[DevelopmentType][]string{
-        Backend: {"req/s", "ms", "μs", "MB/s", "connections"},
-        Frontend: {"ms", "KB", "fps", "MB", "req/s"},
-        Fullstack: {"ms", "req/s", "MB/s", "ops/s", "connections"},
-    }
-    
-    if unitList, ok := units[devType]; ok {
-        return unitList[rand.Intn(len(unitList))]
-    }
-    return "units"
-}
-
 func generateOptimizationRecommendation(devType DevelopmentType) string {
     recommendations := map[DevelopmentType][]string{
         Backend: {
-            "Consider implementing request caching to reduce database load",
-            "Optimize database query patterns for improved throughput",
-            "Implement connection pooling for better resource utilization",
-            "Add request compression for reduced network overhead",
-            "Consider implementing circuit breakers for external services",
+            "Consider implementing request batching for high-volume endpoints",
+            "Database query optimization could improve response times by 15-20%",
+            "Adding a distributed cache layer would reduce database load",
+            "Implement connection pooling to reduce connection overhead",
+            "Consider async processing for non-critical operations",
+            "Implement circuit breakers for external service dependencies",
+            "Database index optimization could improve query performance",
+            "Consider implementing a read replica for heavy read workloads",
+            "API response compression could reduce bandwidth consumption",
+            "Implement rate limiting to protect against traffic spikes",
         },
         Frontend: {
-            "Implement lazy loading for improved initial load time",
-            "Consider code splitting for optimized bundle size",
-            "Add service worker for offline capabilities",
-            "Optimize critical rendering path",
-            "Implement resource prioritization",
+            "Implement code splitting to reduce initial bundle size",
+            "Consider lazy loading for off-screen components",
+            "Optimize critical rendering path for faster first paint",
+            "Use memoization for expensive component calculations",
+            "Implement virtualization for long scrollable lists",
+            "Consider using web workers for CPU-intensive tasks",
+            "Optimize asset loading with preload/prefetch strategies",
+            "Implement request batching for multiple API calls",
+            "Reduce JavaScript execution time with debouncing/throttling",
+            "Optimize animation performance with CSS GPU acceleration",
         },
+        Fullstack: {"End-to-end latency", "API response time", "Database queries", "Cache efficiency", "Network latency"},
     }
     
     if recList, ok := recommendations[devType]; ok {
@@ -806,4 +1069,23 @@ func generateSystemRecommendation() string {
         "Review auto-scaling thresholds for better resource efficiency",
     }
     return recommendations[rand.Intn(len(recommendations))]
+}
+
+func runPerformanceAnalysis(config *SessionConfig) {
+    fmt.Println(getPerformanceTitle(config.devType))
+    
+    iterations := rand.Intn(10) + 5
+    performanceData := make([]float64, iterations)
+    
+    for i := 0; i < iterations; i++ {
+        metric := generatePerformanceMetric(config.devType)
+        unit := generateMetricUnit(config.devType)
+        value := generateBasePerformance(config.devType)
+        performanceData[i] = value
+        
+        fmt.Printf("  📊 %s: %.2f %s\n", metric, value, unit)
+        time.Sleep(time.Duration(rand.Intn(300)+200) * time.Millisecond)
+    }
+    
+    fmt.Printf("\n💡 Optimization: %s\n", generateOptimizationRecommendation(config.devType))
 }
